@@ -9,6 +9,16 @@ fn greet(name: &str) -> String {
 
 fn main() {
     tauri::Builder::default()
+        .setup(|app| {
+            let handle = app.handle();
+            let _window = tauri::WindowBuilder::new(
+                &handle,
+                "external",
+                tauri::WindowUrl::App("/anything".into()),
+            )
+            .build()?;
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![greet])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

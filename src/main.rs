@@ -1,4 +1,6 @@
+mod anywhereelse;
 mod app;
+mod home;
 
 use app::*;
 use leptos::*;
