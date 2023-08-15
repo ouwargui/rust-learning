@@ -1,5 +1,6 @@
-mod async_calls;
 mod app;
+mod async_calls;
+mod counter;
 mod home;
 mod suspense;
 

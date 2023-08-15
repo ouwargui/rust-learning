@@ -1,6 +1,4 @@
-use crate::async_calls::AsyncCalls;
-use crate::home::Home;
-use crate::suspense::Suspense;
+use crate::{async_calls::AsyncCalls, counter::Counter, home::Home, suspense::Suspense};
 
 use leptos::*;
 use leptos_router::{Route, Router, Routes};
@@ -25,6 +23,7 @@ pub fn App(cx: Scope) -> impl IntoView {
             <main>
                 <Routes>
                     <Route path="/" view=Home />
+                    <Route path="/counter" view=Counter />
                     <Route path="/async" view=AsyncCalls />
                     <Route path="/suspense" view=Suspense />
                 </Routes>
