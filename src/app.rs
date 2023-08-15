@@ -1,4 +1,7 @@
-use crate::{async_calls::AsyncCalls, counter::Counter, home::Home, suspense::Suspense};
+use crate::{
+    async_calls::AsyncCalls, async_todos::AsyncTodos, counter::Counter, home::Home,
+    suspense::Suspense,
+};
 
 use leptos::*;
 use leptos_router::{Route, Router, Routes};
@@ -20,12 +23,13 @@ struct GreetArgs<'a> {
 pub fn App(cx: Scope) -> impl IntoView {
     view! { cx,
         <Router>
-            <main>
+            <main class="bg-zinc-800 w-full min-h-screen flex flex-col items-center justify-center" >
                 <Routes>
                     <Route path="/" view=Home />
                     <Route path="/counter" view=Counter />
                     <Route path="/async" view=AsyncCalls />
                     <Route path="/suspense" view=Suspense />
+                    <Route path="/async_todos" view=AsyncTodos />
                 </Routes>
             </main>
         </Router>

@@ -50,7 +50,6 @@ pub fn AsyncCalls(cx: Scope) -> impl IntoView {
     let is_loading = move || if loading.get() { "Loading..." } else { "Idle." };
 
     view! { cx,
-      <main class="bg-zinc-800 w-full min-h-screen flex flex-col items-center justify-center gap-4">
         <div class="flex flex-col gap-2">
             <span class="text-zinc-200">"Message from API: " {apiMsg}</span>
             <button
@@ -76,6 +75,5 @@ pub fn AsyncCalls(cx: Scope) -> impl IntoView {
         >
             "Go back"
         </A>
-      </main>
     }
 }
