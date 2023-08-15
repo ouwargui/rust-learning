@@ -22,12 +22,20 @@ pub fn Home(cx: Scope) -> impl IntoView {
                 Increment
             </button>
             <div class="h-8" />
-            <A
-                class="border border-zinc-700 rounded p-2 text-zinc-200 bg-indigo-500"
-                href="/anywhereelse"
-            >
-                "Go to anywhere else"
-            </A>
+            <div class="flex gap-2">
+                <A
+                    class="border border-zinc-700 rounded p-2 text-zinc-200 bg-indigo-500"
+                    href="/async"
+                >
+                    "Go to async calls"
+                </A>
+                <A
+                    class="border border-zinc-700 rounded p-2 text-zinc-200 bg-pink-500"
+                    href="/suspense"
+                >
+                    "Go to suspense components"
+                </A>
+            </div>
         </main>
     }
 }

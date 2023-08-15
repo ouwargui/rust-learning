@@ -1,4 +1,4 @@
-use crate::anywhereelse::AnywhereElse;
+use crate::async_calls::AsyncCalls;
 use crate::home::Home;
 
 use leptos::*;
@@ -24,7 +24,7 @@ pub fn App(cx: Scope) -> impl IntoView {
             <main>
                 <Routes>
                     <Route path="/" view=Home />
-                    <Route path="/*any" view=AnywhereElse />
+                    <Route path="/async" view=AsyncCalls />
                 </Routes>
             </main>
         </Router>

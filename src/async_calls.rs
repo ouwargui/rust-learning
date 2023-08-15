@@ -16,7 +16,7 @@ async fn load_asynchronous() -> String {
 }
 
 #[component]
-pub fn AnywhereElse(cx: Scope) -> impl IntoView {
+pub fn AsyncCalls(cx: Scope) -> impl IntoView {
     let (count, set_count) = create_signal(cx, 0);
     let (apiMsg, set_api_msg) = create_signal(cx, String::new());
 
