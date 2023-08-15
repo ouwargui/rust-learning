@@ -7,6 +7,14 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
+#[tauri::command]
+async fn load_asynchronous() -> Result<String, String> {
+    let res = reqwest::get("https://httpbin.org/ip").await;
+    let body = res.unwrap().text().await.unwrap();
+
+    Ok(format!("{}", body))
+}
+
 fn main() {
     tauri::Builder::default()
         .setup(|app| {
@@ -19,7 +27,7 @@ fn main() {
             .build()?;
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![greet, load_asynchronous])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
