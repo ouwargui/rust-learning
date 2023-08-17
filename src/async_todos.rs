@@ -1,4 +1,8 @@
-use leptos::{ev::{SubmitEvent, MouseEvent}, html::Input, *};
+use leptos::{
+    ev::{MouseEvent, SubmitEvent},
+    html::Input,
+    *,
+};
 use serde::{Deserialize, Serialize};
 use tauri_sys::tauri;
 
@@ -8,6 +12,8 @@ struct Todo {
     title: String,
     completed: bool,
 }
+
+type TodoList = Vec<Todo>;
 
 impl Todo {
     fn new(id: i32, title: String, completed: bool) -> Self {
@@ -19,30 +25,35 @@ impl Todo {
     }
 }
 
-async fn fetch_todos() -> Vec<Todo> {
-    let todos = tauri::invoke::<_, Vec<Todo>>("fetch_todos", &()).await.unwrap();
-    log!("todos: {:?}", todos);
+async fn fetch_todos() -> TodoList {
+    let todos = tauri::invoke::<_, TodoList>("fetch_todos", &())
+        .await
+        .unwrap();
     todos
 }
 
 #[derive(Serialize, Deserialize)]
 struct AddTodo {
-    todo: Todo
+    todo: Todo,
 }
 
-async fn add_todo(todo: Todo) -> Result<(), ()> {
-    let res = tauri::invoke::<AddTodo, ()>("add_todo", &AddTodo { todo }).await.unwrap();
-    Ok(res)
+async fn add_todo(todo: Todo) -> TodoList {
+    let res = tauri::invoke::<AddTodo, TodoList>("add_todo", &AddTodo { todo })
+        .await
+        .unwrap();
+    res
 }
 
 #[derive(Serialize, Deserialize)]
 struct RemoveTodo {
-    id: i32
+    id: i32,
 }
 
-async fn remove_todo(id: i32) -> Result<(), ()> {
-    let res = tauri::invoke::<RemoveTodo, ()>("remove_todo", &RemoveTodo { id }).await.unwrap();
-    Ok(res)
+async fn remove_todo(id: i32) -> TodoList {
+    let res = tauri::invoke::<RemoveTodo, TodoList>("remove_todo", &RemoveTodo { id })
+        .await
+        .unwrap();
+    res
 }
 
 #[component]
@@ -59,21 +70,29 @@ pub fn AsyncTodos(cx: Scope) -> impl IntoView {
             .unwrap_or_else(|| vec![].into())
     };
 
-    let add_todo_action = create_action(cx, |input: &String| {
+    let add_todo_action = create_action(cx, move |input: &String| {
         let input = input.to_owned();
-        let todo = Todo::new(0, input, false);
-        async move { add_todo(todo).await }
+        let todos_len = todos_result().len();
+        let todo = Todo::new(todos_len.try_into().unwrap(), input, false);
+        async move {
+            add_todo(todo).await;
+            async_todos.refetch();
+        }
     });
 
     let add_todo = move |ev: SubmitEvent| {
         ev.prevent_default();
         let input = todo_title_input_ref.get().expect("input to exist");
         add_todo_action.dispatch(input.value());
+        input.set_value("");
     };
 
-    let remove_todo_action = create_action(cx, |todo_id: &i32| {
+    let remove_todo_action = create_action(cx, move |todo_id: &i32| {
         let todo_id = todo_id.to_owned();
-        async move { remove_todo(todo_id).await }
+        async move {
+            remove_todo(todo_id).await;
+            async_todos.refetch();
+        }
     });
 
     let remove_todo = move |ev: MouseEvent, todo_id: i32| {

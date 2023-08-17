@@ -68,24 +68,30 @@ struct State {
     todos: Mutex<Todos>,
 }
 
+type TodoList = Vec<Todo>;
+
 #[tauri::command]
-async fn fetch_todos(state: tauri::State<'_, State>) -> Result<Vec<Todo>, String> {
+async fn fetch_todos(state: tauri::State<'_, State>) -> Result<TodoList, String> {
     let todos_unwrapped = state.todos.lock().unwrap();
-    let todos = todos_unwrapped.get();
-    Ok(todos.to_vec())
+    let todos = todos_unwrapped.get().to_vec();
+    Ok(todos)
 }
 
 #[tauri::command]
-async fn add_todo(todo: Todo, state: tauri::State<'_, State>) -> Result<(), String> {
+async fn add_todo(todo: Todo, state: tauri::State<'_, State>) -> Result<TodoList, String> {
     let new_todo = Todo::new(todo.id, &todo.title, todo.completed);
     state.todos.lock().unwrap().add(new_todo);
-    Ok(())
+    let todos_unwrapped = state.todos.lock().unwrap();
+    let todos = todos_unwrapped.get().to_vec();
+    Ok(todos)
 }
 
 #[tauri::command]
-async fn remove_todo(id: i32, state: tauri::State<'_, State>) -> Result<(), String> {
+async fn remove_todo(id: i32, state: tauri::State<'_, State>) -> Result<TodoList, String> {
     state.todos.lock().unwrap().remove(id);
-    Ok(())
+    let todos_unwrapped = state.todos.lock().unwrap();
+    let todos = todos_unwrapped.get().to_vec();
+    Ok(todos)
 }
 
 fn main() {
